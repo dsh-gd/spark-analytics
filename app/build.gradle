@@ -28,7 +28,10 @@ dependencies {
 
     // Dependencies for Spark
     implementation 'org.apache.spark:spark-sql_2.13:3.2.1'
+    implementation 'org.apache.spark:spark-hive_2.13:3.2.1'
 
+    // Dependencies for Iceberg
+    implementation 'org.apache.iceberg:iceberg-spark-runtime-3.2_2.12:0.13.1'
 
     // Use Scalatest for testing our library
     testImplementation 'junit:junit:4.13.2'
