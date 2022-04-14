@@ -12,7 +12,7 @@ object App {
     conf.set("spark.sql.catalog.spark_catalog.type", "hive")
     conf.set("spark.sql.catalog.local", "org.apache.iceberg.spark.SparkCatalog")
     conf.set("spark.sql.catalog.local.type", "hadoop")
-    conf.set("spark.sql.catalog.local.warehouse", "$PWD/warehouse")
+    conf.set("spark.sql.catalog.local.warehouse", "data/warehouse")
 
     val spark = SparkSession
       .builder()
