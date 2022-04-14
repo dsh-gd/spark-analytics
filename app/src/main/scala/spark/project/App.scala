@@ -22,11 +22,18 @@ object App {
       .config(conf)
       .getOrCreate()
 
+    val version = spark.version
+    println(version)
+
     spark.sql("CREATE TABLE IF NOT EXISTS local.db.table (id bigint, data string) USING iceberg")
 
     spark.sql("INSERT INTO local.db.table VALUES (1, 'a'), (2, 'b'), (3, 'c');")
 
     val df = spark.table("local.db.table")
     df.show()
+
+    println(greeting())
   }
+
+  def greeting(): String = "Hello, world!"
 }
