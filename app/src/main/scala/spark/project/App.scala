@@ -22,18 +22,20 @@ object App {
       .config(conf)
       .getOrCreate()
 
-    val version = spark.version
-    println(version)
+    val dset_path = "../titanic.csv"
 
-    spark.sql("CREATE TABLE IF NOT EXISTS local.db.table (id bigint, data string) USING iceberg")
+    val df = spark.read
+      .option("header", "true")
+      .csv(dset_path)
 
-    spark.sql("INSERT INTO local.db.table VALUES (1, 'a'), (2, 'b'), (3, 'c');")
+    val stats_df = df
+      .groupBy("Sex", "Pclass", "Survived")
+      .count()
 
-    val df = spark.table("local.db.table")
-    df.show()
+    stats_df.writeTo("local.db.simple_stats")
+      .create()
 
-    println(greeting())
+    val new_df = spark.table("local.db.simple_stats") 
+    new_df.show()
   }
-
-  def greeting(): String = "Hello, world!"
 }
