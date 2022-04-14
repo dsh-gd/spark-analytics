@@ -27,8 +27,7 @@ dependencies {
     implementation 'com.google.guava:guava:30.1.1-jre'
 
     // Dependencies for Spark
-    implementation 'org.apache.spark:spark-core_2.13:3.2.1'
-    compileOnly 'org.apache.spark:spark-sql_2.13:3.2.1'
+    implementation 'org.apache.spark:spark-sql_2.13:3.2.1'
 
 
     // Use Scalatest for testing our library
