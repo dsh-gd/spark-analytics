@@ -33,6 +33,9 @@ dependencies {
     // Dependencies for Iceberg
     implementation 'org.apache.iceberg:iceberg-spark-runtime-3.2_2.12:0.13.1'
 
+    // Dependency for Config
+    implementation 'com.typesafe:config:1.4.2'
+
     // Use Scalatest for testing our library
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.scalatest:scalatest_2.13:3.2.10'
