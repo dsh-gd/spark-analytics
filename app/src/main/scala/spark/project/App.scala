@@ -22,20 +22,21 @@ object App {
       .config(conf)
       .getOrCreate()
 
-    val dset_path = "../titanic.csv"
+    val dset_fname = "/titanic_data.csv"
+    val dset_path = getClass.getResource(dset_fname).getPath()
 
     val df = spark.read
       .option("header", "true")
       .csv(dset_path)
 
-    val stats_df = df
-      .groupBy("Sex", "Pclass", "Survived")
+    df.groupBy("Sex", "Pclass", "Survived")
       .count()
+      .show()
 
-    stats_df.writeTo("local.db.simple_stats")
-      .create()
+    // stats_df.writeTo("local.db.simple_stats")
+    //   .create()
 
-    val new_df = spark.table("local.db.simple_stats") 
-    new_df.show()
+    // val new_df = spark.table("local.db.simple_stats") 
+    // new_df.show()
   }
 }
