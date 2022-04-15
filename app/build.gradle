@@ -49,3 +49,7 @@ application {
     // Define the main class for the application.
     mainClass = 'spark.project.App'
 }
+
+run {
+    standardInput = System.in
+}
