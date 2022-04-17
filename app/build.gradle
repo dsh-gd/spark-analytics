@@ -47,7 +47,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'spark.project.App'
+    mainClass = 'app.spark.App'
 }
 
 run {
