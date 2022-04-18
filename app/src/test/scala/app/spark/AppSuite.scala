@@ -6,7 +6,17 @@ package app.spark
 import org.scalatest.funsuite.AnyFunSuite
 import org.junit.runner.RunWith
 import org.scalatestplus.junit.JUnitRunner
+import com.typesafe.config.ConfigFactory
 
 @RunWith(classOf[JUnitRunner])
 class AppSuite extends AnyFunSuite {
+    test("Check Spark config") {
+        val catalog_config = ConfigFactory.load("spark.conf").getConfig("spark.sql.catalog")
+        val correct_map = Map(
+            "spark.sql.catalog.spark_catalog.type" -> "\"hive\"",
+            "spark.sql.catalog.local.type" -> "\"hadoop\"",
+            "spark.sql.catalog.local.warehouse" -> "\"data/warehouse\""
+        )
+        assert(App.getConfigMap(catalog_config) == correct_map)
+    }
 }
