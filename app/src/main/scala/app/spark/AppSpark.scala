@@ -2,16 +2,21 @@ package app.spark
 
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
+import com.typesafe.config.ConfigFactory
+import scala.jdk.CollectionConverters._
 
 trait AppSpark {
+    val catalog_config = ConfigFactory.load("spark.conf").getConfig("spark.sql.catalog")
+    val config_map = catalog_config
+        .entrySet()
+        .asScala
+        .map { entry =>
+            {"spark.sql.catalog." + entry.getKey} -> entry.getValue.render()
+        }
+        .toMap
+    
     val spark_conf = new SparkConf()
-
-    // conf.set("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions")
-    spark_conf.set("spark.sql.catalog.spark_catalog", "org.apache.iceberg.spark.SparkSessionCatalog")
-    spark_conf.set("spark.sql.catalog.spark_catalog.type", "hive")
-    spark_conf.set("spark.sql.catalog.local", "org.apache.iceberg.spark.SparkCatalog")
-    spark_conf.set("spark.sql.catalog.local.type", "hadoop")
-    spark_conf.set("spark.sql.catalog.local.warehouse", "data/warehouse")
+    spark_conf.setAll(config_map)
 
     val spark = SparkSession
         .builder()
