@@ -6,26 +6,26 @@ object App extends AppSpark {
     val version = spark.version
     println("SPARK VERSION = " + version)
 
-    // println("Enter name of the dataset: ")
+    println("Enter name of the dataset: ")
 
-    // var input = scala.io.StdIn.readLine()
-    // val dset_fname = "/" + input;
-    // var dset_path = ""
+    var input = scala.io.StdIn.readLine()
+    val dset_fname = "/" + input;
+    var dset_path = ""
 
-    // try {      
-    //   dset_path = getClass.getResource(dset_fname).getPath()
-    // } catch {
-    //   case e: NullPointerException => {
-    //     println(s"Error: File $input not found")
-    //     System.exit(0)
-    //   }
-    // }
+    try {      
+      dset_path = getClass.getResource(dset_fname).getPath()
+    } catch {
+      case e: NullPointerException => {
+        println(s"Error: File $input not found")
+        System.exit(0)
+      }
+    }
 
-    // val df = spark.read
-    //   .option("header", "true")
-    //   .csv(dset_path)
+    val df = spark.read
+      .option("header", "true")
+      .csv(dset_path)
 
-    // df.show()
+    df.show()
 
     // stats_df.writeTo("local.db.simple_stats")
     //   .create()
