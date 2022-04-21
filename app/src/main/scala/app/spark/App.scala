@@ -25,7 +25,11 @@ object App extends AppSpark {
       .option("header", "true")
       .csv(dset_path)
 
-    df.show()
+    val nRows: Long = df.count()
+    val nCols: Long = df.columns.length
+
+    println(s"\nNumber of rows: $nRows")
+    println(s"Number of columns: $nCols\n")
 
     // stats_df.writeTo("local.db.simple_stats")
     //   .create()
