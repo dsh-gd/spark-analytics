@@ -1,4 +1,5 @@
 package app.spark
+import org.apache.spark.sql.functions._
 
 object App extends AppSpark {
   def main(args: Array[String]): Unit = {
@@ -9,11 +10,11 @@ object App extends AppSpark {
     println("Enter name of the dataset: ")
 
     var input = scala.io.StdIn.readLine()
-    val dset_fname = "/" + input;
-    var dset_path = ""
+    val dsetName = "/" + input;
+    var dsetPath = ""
 
     try {      
-      dset_path = getClass.getResource(dset_fname).getPath()
+      dsetPath = getClass.getResource(dsetName).getPath()
     } catch {
       case e: NullPointerException => {
         println(s"Error: File $input not found")
@@ -23,18 +24,39 @@ object App extends AppSpark {
 
     val df = spark.read
       .option("header", "true")
-      .csv(dset_path)
+      .csv(dsetPath)
 
-    val nRows: Long = df.count()
-    val nCols: Long = df.columns.length
+    if (input == "titanic_data.csv") {
+      // Number of passangers
+      val countPassangers = df.count()
+      println(countPassangers)
 
-    println(s"\nNumber of rows: $nRows")
-    println(s"Number of columns: $nCols\n")
+      // Number of survived passangers
+      df.groupBy("Survived").count().show()
 
-    // stats_df.writeTo("local.db.simple_stats")
-    //   .create()
+      // Survival rate by sex
+      df.groupBy("Sex", "Survived").count().show()
 
-    // val new_df = spark.table("local.db.simple_stats") 
-    // new_df.show()
+      // Survival rate by class
+      df.groupBy("Pclass", "Survived").count().show()
+
+    } else if (input == "imdb_data.csv") {
+      // Number of movies
+      val countMovies = df.count()
+      println(countMovies)
+
+      // Number of movies by year
+      df.groupBy("Released_Year").count().show()
+
+      // Top 10 movies with highest rating
+      df.orderBy(desc("IMDB_Rating"))
+        .limit(10)
+        .select("Series_Title", "Released_Year", "IMDB_Rating")
+        .show()
+
+    } else {
+      println("Can't do any aggregation on this dataset.")
+      System.exit(0)
+    }
   }
 }
