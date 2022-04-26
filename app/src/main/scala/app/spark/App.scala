@@ -33,13 +33,23 @@ object App extends AppSpark {
       println(countPassangers)
 
       // Number of survived passangers
-      df.groupBy("Survived").count().show()
+      val countSurvived = df.groupBy("Survived").count()
 
       // Survival rate by sex
-      df.groupBy("Sex", "Survived").count().show()
+      val survivalRateSex = df.groupBy("Sex", "Survived").count()
 
       // Survival rate by class
-      df.groupBy("Pclass", "Survived").count().show()
+      val survivalRateClass = df.groupBy("Pclass", "Survived").count()
+
+      spark.sql("CREATE TABLE IF NOT EXISTS local.db.number_of_survived (Survived int, count bigint) USING iceberg")
+      countSurvived.writeTo("local.db.number_of_survived").append()
+
+      spark.sql("CREATE TABLE IF NOT EXISTS local.db.survival_rate_sex (Sex string, Survived int, count bigint) USING iceberg")
+      survivalRateSex.createOrReplaceTempView("survivalRateSex")
+      spark.sql("INSERT INTO local.db.survival_rate_sex SELECT * FROM survivalRateSex")
+
+      spark.sql("CREATE TABLE IF NOT EXISTS local.db.survival_rate_class (Pclass string, Survived int, count bigint) USING iceberg")
+      survivalRateClass.writeTo("local.db.survival_rate_class").append()
 
     } else if (input == "imdb_data.csv") {
       // Number of movies
