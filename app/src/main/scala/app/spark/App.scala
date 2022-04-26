@@ -24,6 +24,7 @@ object App extends AppSpark {
 
     val df = spark.read
       .option("header", "true")
+      .option("inferSchema", "true")
       .csv(dsetPath)
 
     if (input == "titanic_data.csv") {
@@ -46,13 +47,23 @@ object App extends AppSpark {
       println(countMovies)
 
       // Number of movies by year
-      df.groupBy("Released_Year").count().show()
+      val countMoviesByYear = df.groupBy(col("Released_Year").alias("year")).count()
 
       // Top 10 movies with highest rating
-      df.orderBy(desc("IMDB_Rating"))
+      val top10Movies = df.orderBy(desc("IMDB_Rating"))
         .limit(10)
-        .select("Series_Title", "Released_Year", "IMDB_Rating")
-        .show()
+        .select(
+          col("Series_Title").alias("title"),
+          col("Released_Year").alias("year"),
+          col("IMDB_Rating").alias("rating")
+        )
+
+      spark.sql("CREATE TABLE IF NOT EXISTS local.db.number_of_movies_year (year string, count bigint) USING iceberg")
+      countMoviesByYear.writeTo("local.db.number_of_movies_year").append()
+
+      spark.sql("CREATE TABLE IF NOT EXISTS local.db.top_10_movies (title string, year string, rating double) USING iceberg")
+      top10Movies.createOrReplaceTempView("top10movies")
+      spark.sql("INSERT INTO local.db.top_10_movies SELECT * FROM top10movies")
 
     } else {
       println("Can't do any aggregation on this dataset.")
